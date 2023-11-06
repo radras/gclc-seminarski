@@ -1,0 +1,65 @@
+dim 100 100
+
+ang3d_picture 0 0 100 100
+ang3d_origin 50 50 0.75 0.45
+ang3d_unit 8
+ang3d_scale 1 1 1
+ang3d_axes_drawing_range -8 8 -8.5 8.5 -6.5 6.5
+ang3d_drawsystem_p 2 10 10 10 1 2
+
+number pi 3.14
+number tau 6.28
+
+color 200 200 200 
+ang3d_draw_parametric_surface u v
+{0; u<=pi; u+0.08}
+{0; v<=tau; v+0.08}
+{ (5*sin(v))*cos(u); (5*sin(v))*sin(u); 5*cos(v) }
+
+point X 0 0 10.42 0 
+point O 0 0 
+distance T X O
+number a 1
+number b pi
+
+if_then_else {T<tau+pi}
+{
+	% van rezonance
+	if_then_else { T < tau }
+	{
+		% prikaz evolucije u vremenu
+		color 255 0 0
+		ang3d_draw_parametric_curve t
+		{0; t<=T; t+0.02}
+		{
+		5 * (sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t)))/(1+a*a)) * (((1-cos(t))*a/sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t))))*cos(b*t)+(sin(t)*sqrt(1+a*a)/sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t))))*sin(b*t));
+		-5 * (sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t)))/(1+a*a)) * ((sin(t)*sqrt(1+a*a)/sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t))))*cos(b*t)-((1-cos(t))*a/sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t))))*sin(b*t)); 
+		5 * (1-(1-cos(t))/(1+a*a))
+		}
+		}
+	{
+		% postepen prelazak u rotirajuci referentni sistem
+		color 0 155 0
+		ang3d_draw_parametric_curve t
+		{0; t<=tau; t+0.02}
+		{
+		5 * (sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t)))/(1+a*a)) * (((1-cos(t))*a/sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t))))*cos(min(b,pi+tau-T)*t)+(sin(t)*sqrt(1+a*a)/sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t))))*sin(min(b,pi+tau-T)*t));
+		-5 * (sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t)))/(1+a*a)) * ((sin(t)*sqrt(1+a*a)/sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t))))*cos(min(b,pi+tau-T)*t)-((1-cos(t))*a/sqrt(sin(t)*sin(t)+2*a*a*(1-cos(t))))*sin(min(b,pi+tau-T)*t)); 
+		5 * (1-(1-cos(t))/(1+a*a))
+		}
+	}
+}
+{
+	% postepen prelazak u rezonancu
+	color 0 0 255
+	ang3d_draw_parametric_curve t
+	{0; t<=tau; t+0.02}
+	{
+	5 * (sqrt(sin(t)*sin(t)+2*min(a,pi+tau+1-T)*min(a,pi+tau+1-T)*(1-cos(t)))/(1+min(a,pi+tau+1-T)*min(a,pi+tau+1-T))) * (((1-cos(t))*min(a,pi+tau+1-T)/sqrt(sin(t)*sin(t)+2*min(a,pi+tau+1-T)*min(a,pi+tau+1-T)*(1-cos(t)))));
+	-5 * (sqrt(sin(t)*sin(t)+2*min(a,pi+tau+1-T)*min(a,pi+tau+1-T)*(1-cos(t)))/(1+min(a,pi+tau+1-T)*min(a,pi+tau+1-T))) * ((sin(t)*sqrt(1+min(a,pi+tau+1-T)*min(a,pi+tau+1-T))/sqrt(sin(t)*sin(t)+2*min(a,pi+tau+1-T)*min(a,pi+tau+1-T)*(1-cos(t))))); 
+	5 * (1-(1-cos(t))/(1+min(a,pi+tau+1-T)*min(a,pi+tau+1-T)))
+	}
+}
+animation_frames 50 5
+
+
